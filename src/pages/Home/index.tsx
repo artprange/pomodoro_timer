@@ -9,10 +9,10 @@ import {
   HomeContainer,
   CountdownContainer,
   Separator,
-  StartCountDownButton,
   TaskInput,
   MinutesAmountInput,
   StopCountDownButton,
+  StartCountDownButton,
 } from './styles'
 
 const newCycleFormValidationSchema = zod.object({
@@ -36,6 +36,7 @@ interface Cycle {
   task: string
   minutesAmount: number
   startDate: Date
+  interruptedDate?: Date
 }
 
 export function Home() {
@@ -85,6 +86,20 @@ export function Home() {
     }
   }, [activeCycle])
 
+  function handleInterruptCycle() {
+    setCycles(
+      cycles.map((cycle) => {
+        if (cycle.id === activeCycleId) {
+          return { ...cycle, interruptedDate: new Date() }
+        } else {
+          return cycle
+        }
+      })
+    )
+
+    setActiveCycleId(null)
+  }
+
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0
 
@@ -102,6 +117,8 @@ export function Home() {
 
   const task = watch('task')
   const isSubmitDisabled = !task
+
+  console.log(cycles)
 
   return (
     <HomeContainer>
@@ -144,7 +161,7 @@ export function Home() {
         </CountdownContainer>
 
         {activeCycle ? (
-          <StopCountDownButton disabled={isSubmitDisabled} type="button">
+          <StopCountDownButton type="button" onClick={handleInterruptCycle}>
             <HandPalm size={24} />
             Parar
           </StopCountDownButton>
@@ -158,5 +175,3 @@ export function Home() {
     </HomeContainer>
   )
 }
-
-//PAREI AOS 4:34 DA AULA 'INTEMRROMPER CICLO
