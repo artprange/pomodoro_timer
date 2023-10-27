@@ -74,7 +74,7 @@ function createNewCycle(data: CreateCycleData) {
   setActiveCycleId(id)
   setAmountSecondPassed(0)
 
-  // reset()
+  
 }
 
 
