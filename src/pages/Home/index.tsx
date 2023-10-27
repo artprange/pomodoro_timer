@@ -1,4 +1,4 @@
-import { useState, createContext } from 'react'
+import { useContext } from 'react'
 import { HandPalm, Play } from 'phosphor-react'
 
 import {
@@ -11,6 +11,7 @@ import { CountDown } from './components/CountDown'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { FormProvider, useForm } from 'react-hook-form'
+import { CyclesContext } from '../../contexts/CyclesContext'
 
 
 
@@ -29,6 +30,8 @@ type NewCycleFormData = Zod.infer<typeof newCycleFormValidationSchema>
 
 
 export function Home() {
+
+  const { activeCycle, createNewCycle, interruptCurrentCycle } = useContext(CyclesContext)
   
 
   const newCycleForm = useForm<NewCycleFormData>({
@@ -41,13 +44,18 @@ export function Home() {
 
   const { handleSubmit, watch, reset } = newCycleForm
 
+  function handleCreateNewCycle(data: NewCycleFormData){
+    createNewCycle(data)
+    reset()
+  }
+
 
   const task = watch('task')
   const isSubmitDisabled = !task
 
   return (
     <HomeContainer>
-      <form onSubmit={handleSubmit(handleCreteNewCycle)} action="">
+      <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
 
         <FormProvider {...newCycleForm}>
           <NewCycleForm />
@@ -55,7 +63,7 @@ export function Home() {
         <CountDown />
 
         {activeCycle ? (
-          <StopCountDownButton type="button" onClick={handleInterruptCycle}>
+          <StopCountDownButton type="button" onClick={interruptCurrentCycle}>
             <HandPalm size={24} />
             Parar
           </StopCountDownButton>
